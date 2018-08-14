@@ -78,7 +78,7 @@ def match(points, steps=False, overview="simplified", geometry="polyline",
         ';'.join(
             [','.join([str(coord[0]), str(coord[1])]) for coord in points]),
         "?overview={}&steps={}&geometries={}&annotations={}&gaps={}&tidy={}"
-           .format(overview, str(steps).lower(), geometry, annotations, gaps, str(tidy).lower())
+           .format(str(overview).lower(), str(steps).lower(), str(geometry).lower(), str(annotations).lower(), str(gaps).lower(), str(tidy).lower())
     ]
 
     if radius:
@@ -148,7 +148,7 @@ def get_match_url(points, steps=False, overview="simplified", geometry="polyline
         ';'.join(
             [','.join([str(coord[0]), str(coord[1])]) for coord in points]),
         "?overview={}&steps={}&geometries={}&annotations={}&gaps={}&tidy={}"
-           .format(overview, str(steps).lower(), geometry, annotations, gaps, str(tidy).lower())
+           .format(str(overview).lower(), str(steps).lower(), str(geometry).lower(), str(annotations).lower(), str(gaps).lower(), str(tidy).lower())
     ]
 
     if radius:
