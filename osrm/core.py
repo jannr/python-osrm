@@ -108,6 +108,61 @@ def match(points, steps=False, overview="simplified", geometry="polyline",
             print('No matching geometry to decode')
     return r_json
 
+def get_match_url(points, steps=False, overview="simplified", geometry="polyline",
+          timestamps=None, radius=None, annotations="false", gaps="split",
+          tidy=False, waypoints=None, url_config=RequestConfig):
+    """
+    Function wrapping OSRM 'match' function, returning the reponse in JSON
+
+    Parameters
+    ----------
+
+    points : list of tuple/list of point
+        A sequence of points as (x ,y) where x is longitude and y is latitude.
+    steps : bool, optional
+        Default is False.
+    overview : str, optional
+        Query for the geometry overview, either "simplified", "full" or "false"
+        (Default: "simplified")
+    geometry : str, optional
+        Format in which decode the geometry, either "polyline" (ie. not decoded),
+        "geojson", "WKT" or "WKB" (default: "polyline").
+    timestamps : list of timestamp, optional
+    radius : list of float, optional
+    annotations : bool, optional
+    gaps : str, optional
+    tidy : bool, optional
+    waypoints : list of tuple/list of point, optional
+    url_config : osrm.RequestConfig, optional
+        Parameters regarding the host, version and profile to use
+
+    Returns
+    -------
+    dict
+        The response from the osrm instance, parsed as a dict
+    """
+    host = check_host(url_config.host)
+
+    url = [
+        host, '/match/', url_config.version, '/', url_config.profile, '/',
+        ';'.join(
+            [','.join([str(coord[0]), str(coord[1])]) for coord in points]),
+        "?overview={}&steps={}&geometries={}&annotations={}&gaps={}&tidy={}"
+           .format(overview, str(steps).lower(), geometry, annotations, gaps, str(tidy).lower())
+    ]
+
+    if radius:
+        url.append("&radiuses=")
+        url.append(";".join([str(rad) for rad in radius]))
+    if timestamps:
+        url.append("&timestamps=")
+        url.append(";".join([str(timestamp) for timestamp in timestamps]))
+    if waypoints:
+        url.append("&waypoints=")
+        url.append(";".join([str(waypoint) for waypoint in waypoints]))
+
+    req = Request("".join(url))
+    return req.get_full_url()
 
 def decode_geom(encoded_polyline):
     """
